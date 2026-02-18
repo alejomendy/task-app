@@ -25,6 +25,12 @@ export const scheduleTaskNotification = async (title: string, body: string, date
     if (!hasPermission) return null;
 
     try {
+        // Ensure date is in the future
+        if (date <= new Date()) {
+            console.warn('Scheduled date is in the past. Scheduling for 5 seconds from now.');
+            date = new Date(Date.now() + 5000);
+        }
+
         const id = await Notifications.scheduleNotificationAsync({
             content: {
                 title,
@@ -33,7 +39,7 @@ export const scheduleTaskNotification = async (title: string, body: string, date
             },
             trigger: {
                 type: Notifications.SchedulableTriggerInputTypes.DATE,
-                date,
+                date: date,
             },
         });
         return id;

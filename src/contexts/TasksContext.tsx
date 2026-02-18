@@ -15,18 +15,36 @@ interface TasksContextType {
 
 const TasksContext = createContext<TasksContextType | undefined>(undefined);
 
+import { supabaseTasks } from '../services/supabaseTasks';
+import { useAuth } from './AuthContext';
+
 export const TasksProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const { user } = useAuth();
     const [tasks, setTasks] = useState<Task[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchTasks = async () => {
-            const loadedTasks = await loadTasks();
-            setTasks(loadedTasks);
-            setLoading(false);
+            if (!user) {
+                const localTasks = await loadTasks();
+                setTasks(localTasks);
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const cloudTasks = await supabaseTasks.fetchTasks();
+                setTasks(cloudTasks);
+            } catch (e) {
+                console.error('Failed to fetch from cloud, falling back to local', e);
+                const localTasks = await loadTasks();
+                setTasks(localTasks);
+            } finally {
+                setLoading(false);
+            }
         };
         fetchTasks();
-    }, []);
+    }, [user]);
 
     useEffect(() => {
         if (!loading) {
@@ -46,43 +64,81 @@ export const TasksProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             }
         }
 
-        const newTask: Task = {
-            id: Date.now().toString(),
+        const newTaskPayload: Omit<Task, 'id'> = {
             title,
             description,
             priority,
             dueDate: dueDate?.toISOString(),
             isCompleted: false,
             notificationId,
+            ...(user ? { user_id: user.id } : {}),
         };
 
-        setTasks(prev => [...prev, newTask]);
-    }, []);
+        if (user) {
+            try {
+                const cloudTask = await supabaseTasks.createTask(newTaskPayload);
+                setTasks(prev => [...prev, cloudTask]);
+            } catch (e) {
+                Alert.alert('Error', 'Failed to save task to cloud');
+            }
+        } else {
+            const newTask: Task = {
+                id: Date.now().toString(),
+                ...newTaskPayload,
+            };
+            setTasks(prev => [...prev, newTask]);
+        }
+    }, [user]);
 
     const updateTask = useCallback(async (updatedTask: Task) => {
+        if (user) {
+            try {
+                const { id, ...updates } = updatedTask;
+                await supabaseTasks.updateTask(id, updates);
+            } catch (e) {
+                console.warn('Failed to sync update to cloud');
+            }
+        }
         setTasks(prev => prev.map(t => t.id === updatedTask.id ? updatedTask : t));
-    }, []);
+    }, [user]);
 
     const deleteTask = useCallback(async (id: string) => {
         const task = tasks.find(t => t.id === id);
         if (task?.notificationId) {
             await cancelTaskNotification(task.notificationId);
         }
-        setTasks(prev => prev.filter(t => t.id !== id));
-    }, [tasks]);
 
-    const toggleComplete = useCallback((id: string) => {
-        setTasks(prev => prev.map(t => {
-            if (t.id === id) {
-                const newStatus = !t.isCompleted;
-                if (newStatus && t.notificationId) {
-                    cancelTaskNotification(t.notificationId);
-                }
-                return { ...t, isCompleted: newStatus };
+        if (user) {
+            try {
+                await supabaseTasks.deleteTask(id);
+            } catch (e) {
+                console.warn('Failed to delete from cloud');
             }
-            return t;
-        }));
-    }, []);
+        }
+        setTasks(prev => prev.filter(t => t.id !== id));
+    }, [tasks, user]);
+
+    const toggleComplete = useCallback(async (id: string) => {
+        const task = tasks.find(t => t.id === id);
+        if (!task) return;
+
+        const newStatus = !task.isCompleted;
+        if (newStatus && task.notificationId) {
+            cancelTaskNotification(task.notificationId);
+        }
+
+        const updatedTask = { ...task, isCompleted: newStatus };
+
+        if (user) {
+            try {
+                await supabaseTasks.updateTask(id, { isCompleted: newStatus });
+            } catch (e) {
+                console.warn('Failed to sync completion to cloud');
+            }
+        }
+
+        setTasks(prev => prev.map(t => t.id === id ? updatedTask : t));
+    }, [tasks, user]);
 
     return (
         <TasksContext.Provider value={{ tasks, loading, addTask, updateTask, deleteTask, toggleComplete }}>

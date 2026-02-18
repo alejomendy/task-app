@@ -6,7 +6,6 @@ import {
     Modal,
     Platform,
     ScrollView,
-    StyleSheet,
     Text,
     TextInput,
     TouchableOpacity,
@@ -86,41 +85,6 @@ export const TaskForm: React.FC<TaskFormProps> = ({ visible, onClose, onSubmit, 
         }
     };
 
-    const dynamicStyles = {
-        container: {
-            backgroundColor: isDark ? '#1E293B' : '#FFFFFF',
-        },
-        header: {
-            borderBottomColor: isDark ? '#334155' : '#F3F4F6',
-        },
-        headerTitle: {
-            color: isDark ? '#F8FAFC' : '#1F2937',
-        },
-        closeButton: {
-            backgroundColor: isDark ? '#334155' : '#F3F4F6',
-        },
-        input: {
-            backgroundColor: isDark ? '#0F172A' : '#F9FAFB',
-            borderColor: isDark ? '#334155' : '#E5E7EB',
-            color: isDark ? '#F8FAFC' : '#1F2937',
-        },
-        priorityButton: {
-            backgroundColor: isDark ? '#1E293B' : '#FFFFFF',
-            borderColor: isDark ? '#334155' : '#E5E7EB',
-        },
-        dateButton: {
-            backgroundColor: isDark ? '#0F172A' : '#F9FAFB',
-            borderColor: isDark ? '#334155' : '#E5E7EB',
-        },
-        dateText: {
-            color: isDark ? '#E2E8F0' : '#374151',
-        },
-        footer: {
-            backgroundColor: isDark ? '#1E293B' : '#FFFFFF',
-            borderTopColor: isDark ? '#334155' : '#F3F4F6',
-        }
-    };
-
     return (
         <Modal
             visible={visible}
@@ -130,26 +94,29 @@ export const TaskForm: React.FC<TaskFormProps> = ({ visible, onClose, onSubmit, 
         >
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
-                style={styles.overlay}
+                className="flex-1 justify-end bg-black/60"
             >
-                <View style={[styles.container, dynamicStyles.container]}>
-                    <View style={[styles.header, dynamicStyles.header]}>
-                        <Text style={[styles.headerTitle, dynamicStyles.headerTitle]}>
+                <View className="bg-surface dark:bg-surface-dark rounded-t-[32px] h-[90%] shadow-xl elevation-10">
+                    <View className="flex-row justify-between items-center px-6 pt-6 pb-4 border-b border-border dark:border-border-dark">
+                        <Text className="text-2xl font-bold text-text-dark dark:text-text-dark-d">
                             {initialTask ? 'Edit Task' : 'New Task'}
                         </Text>
-                        <TouchableOpacity onPress={onClose} style={[styles.closeButton, dynamicStyles.closeButton]}>
+                        <TouchableOpacity
+                            onPress={onClose}
+                            className="w-10 h-10 rounded-full items-center justify-center bg-bg-light dark:bg-bg-light-dark"
+                        >
                             <Ionicons name="close" size={24} color={isDark ? '#94A3B8' : '#6B7280'} />
                         </TouchableOpacity>
                     </View>
 
                     <ScrollView
                         showsVerticalScrollIndicator={false}
-                        contentContainerStyle={styles.scrollContent}
+                        contentContainerStyle={{ padding: 24, paddingBottom: 120 }}
                     >
-                        <View style={styles.section}>
-                            <Text style={styles.label}>TASK NAME</Text>
+                        <View className="mb-6">
+                            <Text className="text-[11px] font-bold text-slate-500 tracking-wider mb-2">TASK NAME</Text>
                             <TextInput
-                                style={[styles.input, dynamicStyles.input]}
+                                className="border border-border dark:border-border-dark rounded-2xl px-4 py-[14px] text-[15px] bg-bg-light dark:bg-background-dark text-text-dark dark:text-text-dark-d"
                                 placeholder="What needs to be done?"
                                 placeholderTextColor={isDark ? '#475569' : '#9CA3AF'}
                                 value={title}
@@ -157,10 +124,10 @@ export const TaskForm: React.FC<TaskFormProps> = ({ visible, onClose, onSubmit, 
                             />
                         </View>
 
-                        <View style={styles.section}>
-                            <Text style={styles.label}>DESCRIPTION</Text>
+                        <View className="mb-6">
+                            <Text className="text-[11px] font-bold text-slate-500 tracking-wider mb-2">DESCRIPTION</Text>
                             <TextInput
-                                style={[styles.input, styles.textArea, dynamicStyles.input]}
+                                className="border border-border dark:border-border-dark rounded-2xl px-4 py-[14px] text-[15px] bg-bg-light dark:bg-background-dark text-text-dark dark:text-text-dark-d min-h-[100px]"
                                 placeholder="Add details..."
                                 placeholderTextColor={isDark ? '#475569' : '#9CA3AF'}
                                 value={description}
@@ -170,46 +137,46 @@ export const TaskForm: React.FC<TaskFormProps> = ({ visible, onClose, onSubmit, 
                             />
                         </View>
 
-                        <View style={styles.section}>
-                            <Text style={styles.label}>PRIORITY</Text>
-                            <View style={styles.priorityRow}>
-                                {(['low', 'medium', 'high'] as const).map((p) => (
-                                    <TouchableOpacity
-                                        key={p}
-                                        style={[
-                                            styles.priorityButton,
-                                            dynamicStyles.priorityButton,
-                                            priority === p && styles.priorityButtonActive,
-                                            priority === p && p === 'high' && styles.priorityHigh,
-                                            priority === p && p === 'medium' && styles.priorityMedium,
-                                            priority === p && p === 'low' && styles.priorityLow,
-                                        ]}
-                                        onPress={() => setPriority(p)}
-                                    >
-                                        <Text style={[
-                                            styles.priorityText,
-                                            priority === p && styles.priorityTextActive,
-                                            priority === p && p === 'high' && styles.priorityTextHigh,
-                                            priority === p && p === 'medium' && styles.priorityTextMedium,
-                                            priority === p && p === 'low' && styles.priorityTextLow,
-                                        ]}>
-                                            {p.charAt(0).toUpperCase() + p.slice(1)}
-                                        </Text>
-                                    </TouchableOpacity>
-                                ))}
+                        <View className="mb-6">
+                            <Text className="text-[11px] font-bold text-slate-500 tracking-wider mb-2">PRIORITY</Text>
+                            <View className="flex-row gap-3">
+                                {(['low', 'medium', 'high'] as const).map((p) => {
+                                    const active = priority === p;
+                                    let borderColor = 'border-border dark:border-border-dark';
+                                    let bgColor = 'bg-surface dark:bg-surface-dark';
+                                    let textColor = 'text-slate-500';
+
+                                    if (active) {
+                                        if (p === 'high') { borderColor = 'border-orange-500'; bgColor = 'bg-orange-50 dark:bg-orange-950/30'; textColor = 'text-orange-600'; }
+                                        if (p === 'medium') { borderColor = 'border-primary'; bgColor = 'bg-blue-50 dark:bg-blue-950/30'; textColor = 'text-primary'; }
+                                        if (p === 'low') { borderColor = 'border-emerald-600'; bgColor = 'bg-emerald-50 dark:bg-emerald-950/30'; textColor = 'text-emerald-700'; }
+                                    }
+
+                                    return (
+                                        <TouchableOpacity
+                                            key={p}
+                                            className={`flex-1 py-3 rounded-xl border-2 items-center ${borderColor} ${bgColor}`}
+                                            onPress={() => setPriority(p)}
+                                        >
+                                            <Text className={`text-sm ${active ? 'font-bold' : 'font-semibold'} ${textColor}`}>
+                                                {p.charAt(0).toUpperCase() + p.slice(1)}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    );
+                                })}
                             </View>
                         </View>
 
-                        <View style={styles.section}>
-                            <Text style={styles.label}>DUE DATE & TIME</Text>
+                        <View className="mb-6">
+                            <Text className="text-[11px] font-bold text-slate-500 tracking-wider mb-2">DUE DATE & TIME</Text>
                             <TouchableOpacity
-                                style={[styles.dateButton, dynamicStyles.dateButton]}
+                                className="flex-row items-center border border-border dark:border-border-dark rounded-2xl px-4 py-[14px] bg-bg-light dark:bg-background-dark"
                                 onPress={openDatePicker}
                             >
-                                <View style={[styles.dateIconContainer, { backgroundColor: isDark ? '#1E1B4B' : '#DBEAFE' }]}>
+                                <View className="w-9 h-9 rounded-xl items-center justify-center mr-3 bg-blue-100 dark:bg-indigo-950">
                                     <Ionicons name="calendar-outline" size={20} color="#3B82F6" />
                                 </View>
-                                <Text style={[styles.dateText, dynamicStyles.dateText]}>
+                                <Text className="text-sm font-medium text-text-dark dark:text-text-dark-d">
                                     {dueDate
                                         ? dueDate.toLocaleString([], {
                                             weekday: 'short',
@@ -226,12 +193,12 @@ export const TaskForm: React.FC<TaskFormProps> = ({ visible, onClose, onSubmit, 
                         </View>
                     </ScrollView>
 
-                    <View style={[styles.footer, dynamicStyles.footer]}>
+                    <View className="absolute bottom-0 left-0 right-0 p-6 bg-surface dark:bg-surface-dark border-t border-border dark:border-border-dark">
                         <TouchableOpacity
-                            style={styles.submitButton}
+                            className="bg-primary rounded-2xl py-4 items-center shadow-lg shadow-primary elevation-4"
                             onPress={handleSubmit}
                         >
-                            <Text style={styles.submitButtonText}>
+                            <Text className="text-base font-bold text-white">
                                 {initialTask ? 'Save Changes' : 'Create Task'}
                             </Text>
                         </TouchableOpacity>
@@ -252,153 +219,3 @@ export const TaskForm: React.FC<TaskFormProps> = ({ visible, onClose, onSubmit, 
         </Modal>
     );
 };
-
-const styles = StyleSheet.create({
-    overlay: {
-        flex: 1,
-        justifyContent: 'flex-end',
-        backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    },
-    container: {
-        borderTopLeftRadius: 32,
-        borderTopRightRadius: 32,
-        height: '90%',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: -4 },
-        shadowOpacity: 0.2,
-        shadowRadius: 12,
-        elevation: 10,
-    },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: 24,
-        paddingTop: 24,
-        paddingBottom: 16,
-        borderBottomWidth: 1,
-    },
-    headerTitle: {
-        fontSize: 24,
-        fontWeight: '700',
-    },
-    closeButton: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    scrollContent: {
-        padding: 24,
-        paddingBottom: 120,
-    },
-    section: {
-        marginBottom: 24,
-    },
-    label: {
-        fontSize: 11,
-        fontWeight: '700',
-        color: '#6B7280',
-        letterSpacing: 0.5,
-        marginBottom: 8,
-    },
-    input: {
-        borderWidth: 1,
-        borderRadius: 16,
-        paddingHorizontal: 16,
-        paddingVertical: 14,
-        fontSize: 15,
-    },
-    textArea: {
-        height: 100,
-        paddingTop: 14,
-    },
-    priorityRow: {
-        flexDirection: 'row',
-        gap: 12,
-    },
-    priorityButton: {
-        flex: 1,
-        paddingVertical: 12,
-        borderRadius: 12,
-        borderWidth: 2,
-        alignItems: 'center',
-    },
-    priorityButtonActive: {
-        borderWidth: 2,
-    },
-    priorityLow: {
-        backgroundColor: '#D1FAE5',
-        borderColor: '#059669',
-    },
-    priorityMedium: {
-        backgroundColor: '#DBEAFE',
-        borderColor: '#2563EB',
-    },
-    priorityHigh: {
-        backgroundColor: '#FED7AA',
-        borderColor: '#EA580C',
-    },
-    priorityText: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#6B7280',
-    },
-    priorityTextActive: {
-        fontWeight: '700',
-    },
-    priorityTextLow: {
-        color: '#059669',
-    },
-    priorityTextMedium: {
-        color: '#2563EB',
-    },
-    priorityTextHigh: {
-        color: '#EA580C',
-    },
-    dateButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderWidth: 1,
-        borderRadius: 16,
-        paddingHorizontal: 16,
-        paddingVertical: 14,
-    },
-    dateIconContainer: {
-        width: 36,
-        height: 36,
-        borderRadius: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginRight: 12,
-    },
-    dateText: {
-        fontSize: 14,
-        fontWeight: '500',
-    },
-    footer: {
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        padding: 24,
-        borderTopWidth: 1,
-    },
-    submitButton: {
-        backgroundColor: '#3B82F6',
-        borderRadius: 16,
-        paddingVertical: 16,
-        alignItems: 'center',
-        shadowColor: '#3B82F6',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 4,
-    },
-    submitButtonText: {
-        fontSize: 16,
-        fontWeight: '700',
-        color: '#FFFFFF',
-    },
-});

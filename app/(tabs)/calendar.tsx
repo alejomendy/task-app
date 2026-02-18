@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TaskForm } from '../../src/components/TaskForm';
 import { TaskItem } from '../../src/components/TaskItem';
@@ -93,134 +93,103 @@ export default function CalendarScreen() {
     const days = getDaysInMonth(currentDate);
     const selectedDateTasks = getTasksForSelectedDate();
 
-    const dynamicStyles = {
-        container: {
-            backgroundColor: isDark ? '#0F172A' : '#FFFFFF',
-        },
-        headerTitle: {
-            color: isDark ? '#F8FAFC' : '#1F2937',
-        },
-        monthText: {
-            color: isDark ? '#F8FAFC' : '#1F2937',
-        },
-        navButton: {
-            backgroundColor: isDark ? '#1E293B' : '#F3F4F6',
-        },
-        calendarCard: {
-            backgroundColor: isDark ? '#1E293B' : '#FFFFFF',
-            borderColor: isDark ? '#334155' : '#F3F4F6',
-        },
-        dayCell: (date: Date | null) => ({
-            backgroundColor: isSelected(date)
-                ? '#3B82F6'
-                : (isToday(date) ? (isDark ? '#1E3A8A' : '#DBEAFE') : 'transparent'),
-        }),
-        dayText: (date: Date | null) => ({
-            color: isSelected(date)
-                ? '#FFFFFF'
-                : (isToday(date) ? '#3B82F6' : (isDark ? '#E2E8F0' : '#374151')),
-        }),
-        sectionTitle: {
-            color: isDark ? '#F8FAFC' : '#1F2937',
-        },
-        countText: {
-            color: isDark ? '#94A3B8' : '#6B7280',
-        }
-    };
-
     return (
-        <SafeAreaView style={[styles.container, dynamicStyles.container]} edges={['top']}>
-            <View style={styles.header}>
-                <Text style={[styles.headerTitle, dynamicStyles.headerTitle]}>Calendar</Text>
+        <SafeAreaView className="flex-1 bg-background dark:bg-background-dark" edges={['top']}>
+            <View className="flex-row justify-between items-center px-4 py-4">
+                <Text className="text-[28px] font-bold text-text-dark dark:text-text-dark-d">Calendar</Text>
                 <TouchableOpacity
-                    style={styles.todayButton}
+                    className="px-4 py-2 bg-primary rounded-xl"
                     onPress={() => {
                         const today = new Date();
                         setCurrentDate(today);
                         setSelectedDate(today);
                     }}
                 >
-                    <Text style={styles.todayButtonText}>Today</Text>
+                    <Text className="text-sm font-semibold text-white">Today</Text>
                 </TouchableOpacity>
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false}>
-                <View style={styles.monthNav}>
-                    <TouchableOpacity onPress={() => changeMonth(-1)} style={[styles.navButton, dynamicStyles.navButton]}>
+                <View className="flex-row justify-between items-center px-4 py-4">
+                    <TouchableOpacity
+                        onPress={() => changeMonth(-1)}
+                        className="w-10 h-10 rounded-full items-center justify-center bg-bg-light dark:bg-bg-light-dark"
+                    >
                         <Ionicons name="chevron-back" size={24} color={isDark ? '#94A3B8' : '#374151'} />
                     </TouchableOpacity>
-                    <Text style={[styles.monthText, dynamicStyles.monthText]}>
+                    <Text className="text-lg font-bold text-text-dark dark:text-text-dark-d">
                         {MONTHS[currentDate.getMonth()]} {currentDate.getFullYear()}
                     </Text>
-                    <TouchableOpacity onPress={() => changeMonth(1)} style={[styles.navButton, dynamicStyles.navButton]}>
+                    <TouchableOpacity
+                        onPress={() => changeMonth(1)}
+                        className="w-10 h-10 rounded-full items-center justify-center bg-bg-light dark:bg-bg-light-dark"
+                    >
                         <Ionicons name="chevron-forward" size={24} color={isDark ? '#94A3B8' : '#374151'} />
                     </TouchableOpacity>
                 </View>
 
-                <View style={[styles.calendarCard, dynamicStyles.calendarCard]}>
-                    <View style={styles.dayHeaderRow}>
+                <View className="mx-4 rounded-2xl p-4 border border-border dark:border-border-dark bg-surface dark:bg-surface-dark shadow-sm elevation-2">
+                    <View className="flex-row mb-2">
                         {DAYS.map(day => (
-                            <View key={day} style={styles.dayHeader}>
-                                <Text style={styles.dayHeaderText}>{day}</Text>
+                            <View key={day} className="flex-1 items-center py-2">
+                                <Text className="text-[12px] font-semibold text-slate-500 dark:text-slate-400">{day}</Text>
                             </View>
                         ))}
                     </View>
 
-                    <View style={styles.daysGrid}>
-                        {days.map((date, index) => (
-                            <TouchableOpacity
-                                key={index}
-                                style={[
-                                    styles.dayCell,
-                                    dynamicStyles.dayCell(date),
-                                    !date && styles.emptyCell,
-                                ]}
-                                onPress={() => date && setSelectedDate(date)}
-                                disabled={!date}
-                            >
-                                {date && (
-                                    <>
-                                        <Text style={[
-                                            styles.dayText,
-                                            dynamicStyles.dayText(date),
-                                            isSelected(date) && styles.selectedDayText,
-                                        ]}>
-                                            {date.getDate()}
-                                        </Text>
-                                        {hasTasksOnDate(date) && (
-                                            <View style={[
-                                                styles.taskDot,
-                                                isSelected(date) && styles.taskDotSelected,
-                                            ]} />
-                                        )}
-                                    </>
-                                )}
-                            </TouchableOpacity>
-                        ))}
+                    <View className="flex-row flex-wrap">
+                        {days.map((date, index) => {
+                            const selected = isSelected(date);
+                            const today = isToday(date);
+                            const hasTask = hasTasksOnDate(date);
+
+                            return (
+                                <TouchableOpacity
+                                    key={index}
+                                    className={`w-[14.28%] aspect-square items-center justify-center rounded-xl my-[2px] ${selected ? 'bg-primary' : (today ? 'bg-blue-100 dark:bg-indigo-950' : 'bg-transparent')
+                                        }`}
+                                    onPress={() => date && setSelectedDate(date)}
+                                    disabled={!date}
+                                >
+                                    {date && (
+                                        <>
+                                            <Text className={`text-sm font-medium ${selected ? 'text-white font-bold' : (today ? 'text-primary' : 'text-text-dark dark:text-text-dark-d')
+                                                }`}>
+                                                {date.getDate()}
+                                            </Text>
+                                            {hasTask && (
+                                                <View className={`w-1 h-1 rounded-full mt-[2px] ${selected ? 'bg-white' : 'bg-primary'
+                                                    }`} />
+                                            )}
+                                        </>
+                                    )}
+                                </TouchableOpacity>
+                            );
+                        })}
                     </View>
                 </View>
 
-                <View style={styles.tasksSection}>
-                    <View style={styles.tasksSectionHeader}>
-                        <Text style={[styles.tasksSectionTitle, dynamicStyles.sectionTitle]}>
+                <View className="mt-6 px-4 pb-[100px]">
+                    <View className="flex-row justify-between items-center mb-4">
+                        <Text className="text-lg font-bold text-text-dark dark:text-text-dark-d">
                             {selectedDate.toLocaleDateString('en-US', {
                                 weekday: 'long',
                                 month: 'long',
                                 day: 'numeric'
                             })}
                         </Text>
-                        <Text style={[styles.tasksCount, dynamicStyles.countText]}>
+                        <Text className="text-sm font-semibold text-text-light dark:text-text-light-d">
                             {selectedDateTasks.length} {selectedDateTasks.length === 1 ? 'task' : 'tasks'}
                         </Text>
                     </View>
 
                     {selectedDateTasks.length === 0 ? (
-                        <View style={styles.emptyState}>
+                        <View className="items-center py-12">
                             <Ionicons name="calendar-outline" size={48} color={isDark ? '#1E293B' : '#E5E7EB'} />
-                            <Text style={styles.emptyStateText}>No tasks for this day</Text>
+                            <Text className="text-sm mt-3 text-slate-400 dark:text-slate-600">No tasks for this day</Text>
                         </View>
                     ) : (
-                        <View style={styles.tasksList}>
+                        <View className="gap-2">
                             {selectedDateTasks.map(task => (
                                 <TaskItem
                                     key={task.id}
@@ -247,137 +216,3 @@ export default function CalendarScreen() {
         </SafeAreaView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: 16,
-        paddingVertical: 16,
-    },
-    headerTitle: {
-        fontSize: 28,
-        fontWeight: '700',
-    },
-    todayButton: {
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        backgroundColor: '#3B82F6',
-        borderRadius: 12,
-    },
-    todayButtonText: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#FFFFFF',
-    },
-    monthNav: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: 16,
-        paddingVertical: 16,
-    },
-    navButton: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    monthText: {
-        fontSize: 18,
-        fontWeight: '700',
-    },
-    calendarCard: {
-        marginHorizontal: 16,
-        borderRadius: 16,
-        padding: 16,
-        borderWidth: 1,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.06,
-        shadowRadius: 8,
-        elevation: 2,
-    },
-    dayHeaderRow: {
-        flexDirection: 'row',
-        marginBottom: 8,
-    },
-    dayHeader: {
-        flex: 1,
-        alignItems: 'center',
-        paddingVertical: 8,
-    },
-    dayHeaderText: {
-        fontSize: 12,
-        fontWeight: '600',
-        color: '#6B7280',
-    },
-    daysGrid: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-    },
-    dayCell: {
-        width: '14.28%',
-        aspectRatio: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 12,
-        marginVertical: 2,
-    },
-    emptyCell: {
-        backgroundColor: 'transparent',
-    },
-    dayText: {
-        fontSize: 14,
-        fontWeight: '500',
-    },
-    selectedDayText: {
-        fontWeight: '700',
-    },
-    taskDot: {
-        width: 4,
-        height: 4,
-        borderRadius: 2,
-        backgroundColor: '#3B82F6',
-        marginTop: 2,
-    },
-    taskDotSelected: {
-        backgroundColor: '#FFFFFF',
-    },
-    tasksSection: {
-        marginTop: 24,
-        paddingHorizontal: 16,
-        paddingBottom: 100,
-    },
-    tasksSectionHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 16,
-    },
-    tasksSectionTitle: {
-        fontSize: 18,
-        fontWeight: '700',
-    },
-    tasksCount: {
-        fontSize: 14,
-        fontWeight: '600',
-    },
-    tasksList: {
-        gap: 8,
-    },
-    emptyState: {
-        alignItems: 'center',
-        paddingVertical: 48,
-    },
-    emptyStateText: {
-        fontSize: 14,
-        color: '#9CA3AF',
-        marginTop: 12,
-    },
-});

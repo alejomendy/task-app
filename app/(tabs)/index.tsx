@@ -1,13 +1,13 @@
-import { DateStrip } from '@/src/components/DateStrip';
-import { TaskForm } from '@/src/components/TaskForm';
-import { TaskItem } from '@/src/components/TaskItem';
-import { useTheme } from '@/src/contexts/ThemeContext';
-import { useTasks } from '@/src/hooks/useTasks';
-import { Task } from '@/src/types/task';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useMemo, useState } from 'react';
-import { SectionList, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SectionList, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { DateStrip } from '../../src/components/DateStrip';
+import { TaskForm } from '../../src/components/TaskForm';
+import { TaskItem } from '../../src/components/TaskItem';
+import { useTheme } from '../../src/contexts/ThemeContext';
+import { useTasks } from '../../src/hooks/useTasks';
+import { Task } from '../../src/types/task';
 
 export default function HomeScreen() {
   const { tasks, loading, addTask, updateTask, deleteTask, toggleComplete } = useTasks();
@@ -95,64 +95,28 @@ export default function HomeScreen() {
 
   if (loading) {
     return (
-      <View style={[styles.loadingContainer, { backgroundColor: isDark ? '#0F172A' : '#F5F5F5' }]}>
-        <Text style={[styles.loadingText, { color: isDark ? '#94A3B8' : '#6B7280' }]}>Loading...</Text>
+      <View className="flex-1 justify-center items-center bg-background dark:bg-background-dark">
+        <Text className="text-sm text-text-light dark:text-text-light-d">Loading...</Text>
       </View>
     );
   }
 
-  const dynamicStyles = {
-    safeArea: {
-      backgroundColor: isDark ? '#0F172A' : '#F5F5F5',
-    },
-    headerTitle: {
-      color: isDark ? '#F8FAFC' : '#1F2937',
-    },
-    headerSubtitle: {
-      color: isDark ? '#64748B' : '#9CA3AF',
-    },
-    searchButton: {
-      backgroundColor: isDark ? '#1E293B' : '#F3F4F6',
-    },
-    mainCard: {
-      backgroundColor: isDark ? '#1E293B' : '#FFFFFF',
-    },
-    dayHeader: {
-      borderBottomColor: isDark ? '#334155' : '#F3F4F6',
-    },
-    dayHeaderLeft: {
-      color: isDark ? '#64748B' : '#9CA3AF',
-    },
-    sectionHeader: {
-      backgroundColor: isDark ? '#1E293B' : '#FFFFFF',
-    },
-    sectionHeaderText: {
-      color: isDark ? '#F8FAFC' : '#374151',
-    },
-    emptyText: {
-      color: isDark ? '#64748B' : '#9CA3AF',
-    },
-    emptySubtext: {
-      color: isDark ? '#475569' : '#D1D5DB',
-    }
-  };
-
   return (
-    <SafeAreaView style={[styles.safeArea, dynamicStyles.safeArea]}>
+    <SafeAreaView className="flex-1 bg-background dark:bg-background-dark" edges={['top']}>
       <StatusBar barStyle={isDark ? "light-content" : "dark-content"} backgroundColor={isDark ? "#0F172A" : "#F5F5F5"} />
 
       {/* Header */}
-      <View style={styles.header}>
+      <View className="flex-row justify-between items-start px-5 pt-4 pb-3">
         <View>
-          <Text style={[styles.headerTitle, dynamicStyles.headerTitle]}>
+          <Text className="text-[26px] font-bold leading-8 text-text-dark dark:text-text-dark-d">
             {selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
           </Text>
-          <Text style={[styles.headerSubtitle, dynamicStyles.headerSubtitle]}>
+          <Text className="text-[13px] font-normal mt-[2px] text-text-light dark:text-text-light-d">
             Week {getWeekNumber(selectedDate)}
           </Text>
         </View>
         <TouchableOpacity
-          style={[styles.searchButton, dynamicStyles.searchButton]}
+          className="w-[38px] h-[38px] rounded-full items-center justify-center bg-bg-light dark:bg-bg-light-dark"
           onPress={() => {
             // TODO: Implement search functionality
           }}
@@ -162,22 +126,22 @@ export default function HomeScreen() {
       </View>
 
       {/* Date Strip */}
-      <View style={styles.dateStripContainer}>
+      <View className="mb-4">
         <DateStrip selectedDate={selectedDate} onSelectDate={setSelectedDate} />
       </View>
 
       {/* Main Content Card */}
-      <View style={[styles.mainCard, dynamicStyles.mainCard]}>
+      <View className="flex-1 rounded-t-[32px] bg-surface dark:bg-surface-dark shadow-md elevation-8">
         {/* Day Header */}
-        <View style={[styles.dayHeader, dynamicStyles.dayHeader]}>
-          <Text style={[styles.dayHeaderLeft, dynamicStyles.dayHeaderLeft]}>
+        <View className="flex-row justify-between items-center px-5 py-4 border-b border-border dark:border-border-dark">
+          <Text className="text-[11px] font-bold tracking-widest text-text-light dark:text-text-light-d">
             {currentTime.toLocaleDateString('en-US', {
               weekday: 'long',
               month: 'short',
               day: 'numeric'
             }).toUpperCase()}
           </Text>
-          <Text style={styles.dayHeaderRight}>
+          <Text className="text-[13px] font-bold text-primary">
             {tasksLeft} Tasks Left
           </Text>
         </View>
@@ -195,19 +159,19 @@ export default function HomeScreen() {
             />
           )}
           renderSectionHeader={({ section: { title, icon } }) => (
-            <View style={[styles.sectionHeader, dynamicStyles.sectionHeader]}>
+            <View className="flex-row items-center px-5 pt-5 pb-2 bg-surface dark:bg-surface-dark">
               <Ionicons name={icon} size={16} color={isDark ? '#3B82F6' : '#374151'} />
-              <Text style={[styles.sectionHeaderText, dynamicStyles.sectionHeaderText]}>{title}</Text>
+              <Text className="text-[15px] font-bold ml-2 text-text-dark dark:text-text-dark-d">{title}</Text>
             </View>
           )}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={{ paddingBottom: 100 }}
           showsVerticalScrollIndicator={false}
           stickySectionHeadersEnabled={false}
           ListEmptyComponent={
-            <View style={styles.emptyState}>
+            <View className="items-center justify-center py-20">
               <Ionicons name="checkmark-circle-outline" size={48} color={isDark ? '#1F2937' : '#E5E7EB'} />
-              <Text style={[styles.emptyText, dynamicStyles.emptyText]}>No tasks for this day</Text>
-              <Text style={[styles.emptySubtext, dynamicStyles.emptySubtext]}>Tap + to add a new task</Text>
+              <Text className="mt-3 text-[15px] font-medium text-text-light dark:text-text-light-d">No tasks for this day</Text>
+              <Text className="text-[13px] mt-1 text-slate-400 dark:text-slate-600">Tap + to add a new task</Text>
             </View>
           }
         />
@@ -215,7 +179,7 @@ export default function HomeScreen() {
 
       {/* FAB */}
       <TouchableOpacity
-        style={styles.fab}
+        className="absolute w-14 h-14 rounded-full bg-primary bottom-6 right-6 items-center justify-center shadow-lg shadow-primary elevation-8"
         onPress={handleAddTask}
       >
         <Ionicons name="add" size={24} color="#FFFFFF" />
@@ -234,117 +198,4 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    fontSize: 14,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 12,
-  },
-  headerTitle: {
-    fontSize: 26,
-    fontWeight: '700',
-    lineHeight: 32,
-  },
-  headerSubtitle: {
-    fontSize: 13,
-    fontWeight: '400',
-    marginTop: 2,
-  },
-  searchButton: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  dateStripContainer: {
-    marginBottom: 16,
-  },
-  mainCard: {
-    flex: 1,
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  dayHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-  },
-  dayHeaderLeft: {
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 1,
-  },
-  dayHeaderRight: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#3B82F6',
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 8,
-  },
-  sectionHeaderText: {
-    fontSize: 15,
-    fontWeight: '700',
-    marginLeft: 8,
-  },
-  listContent: {
-    paddingBottom: 100,
-  },
-  emptyState: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 80,
-  },
-  emptyText: {
-    marginTop: 12,
-    fontSize: 15,
-    fontWeight: '500',
-  },
-  emptySubtext: {
-    fontSize: 13,
-    marginTop: 4,
-  },
-  fab: {
-    position: 'absolute',
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#3B82F6',
-    bottom: 24,
-    right: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#3B82F6',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.4,
-    shadowRadius: 16,
-    elevation: 8,
-  },
-});
+

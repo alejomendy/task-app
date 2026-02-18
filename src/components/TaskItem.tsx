@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Text, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 import { Task } from '../types/task';
 
@@ -46,83 +46,63 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete, on
         );
     };
 
-    const getCategoryInfo = () => {
+    const getCategoryStyles = () => {
         if (task.priority === 'high') {
             return {
                 label: 'PRIORITY',
-                bgColor: isDark ? '#7C2D12' : '#FED7AA',
-                textColor: isDark ? '#FB923C' : '#EA580C'
+                container: 'bg-priority-bg text-priority-text',
             };
         }
         if (task.priority === 'medium') {
             return {
                 label: 'WORK',
-                bgColor: isDark ? '#1E3A8A' : '#DBEAFE',
-                textColor: isDark ? '#60A5FA' : '#2563EB'
+                container: 'bg-work-bg text-work-text',
             };
         }
         return {
             label: 'PERSONAL',
-            bgColor: isDark ? '#064E3B' : '#D1FAE5',
-            textColor: isDark ? '#34D399' : '#059669'
+            container: 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400',
         };
     };
 
-    const category = getCategoryInfo();
+    const category = getCategoryStyles();
     const timeStr = task.dueDate
         ? new Date(task.dueDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
         : '09:00 AM';
 
-    const cardStyles = {
-        backgroundColor: isDark ? '#1E293B' : '#FFFFFF',
-        borderColor: isDark ? '#334155' : '#F3F4F6',
-    };
-
-    const textStyles = {
-        title: {
-            color: isDark ? '#F8FAFC' : '#1F2937',
-        },
-        time: {
-            color: isDark ? '#94A3B8' : '#6B7280',
-        }
-    };
-
     return (
-        <View style={styles.cardContainer}>
-            <View style={[styles.card, cardStyles]}>
+        <View className="px-4 py-[6px]">
+            <View className="flex-row items-center rounded-2xl p-4 border border-border dark:border-border-dark bg-surface dark:bg-surface-dark shadow-sm elevation-2">
                 {/* Checkbox */}
                 <TouchableOpacity
                     onPress={() => onToggle(task.id)}
-                    style={styles.checkboxContainer}
+                    className="w-[22px] h-[22px] mr-3"
                 >
                     {task.isCompleted ? (
-                        <View style={styles.checkboxChecked}>
+                        <View className="w-[22px] h-[22px] rounded-full bg-primary items-center justify-center">
                             <Ionicons name="checkmark" size={12} color="#FFFFFF" />
                         </View>
                     ) : (
-                        <View style={[styles.checkboxUnchecked, { borderColor: isDark ? '#475569' : '#D1D5DB', backgroundColor: isDark ? '#1E293B' : '#FFFFFF' }]} />
+                        <View className="w-[22px] h-[22px] rounded-full border-2 border-slate-300 dark:border-slate-600 bg-surface dark:bg-surface-dark" />
                     )}
                 </TouchableOpacity>
 
                 {/* Content */}
-                <View style={styles.content}>
+                <View className="flex-1">
                     <Text
-                        style={[
-                            styles.title,
-                            textStyles.title,
-                            task.isCompleted && styles.titleCompleted
-                        ]}
+                        className={`text-[15px] font-semibold mb-[6px] text-text-dark dark:text-text-dark-d ${task.isCompleted ? 'line-through text-slate-400 opacity-60' : ''
+                            }`}
                     >
                         {task.title}
                     </Text>
-                    <View style={styles.metaRow}>
-                        <View style={styles.timeContainer}>
+                    <View className="flex-row items-center">
+                        <View className="flex-row items-center gap-1">
                             <Ionicons name="time-outline" size={14} color={isDark ? '#94A3B8' : '#6B7280'} />
-                            <Text style={[styles.time, textStyles.time]}>{timeStr}</Text>
+                            <Text className="text-[12px] font-normal text-text-light dark:text-text-light-d">{timeStr}</Text>
                         </View>
-                        <View style={[styles.dotSeparator, { backgroundColor: isDark ? '#334155' : '#D1D5DB' }]} />
-                        <View style={[styles.tag, { backgroundColor: category.bgColor }]}>
-                            <Text style={[styles.tagText, { color: category.textColor }]}>
+                        <View className="w-[3px] h-[3px] rounded-full bg-slate-300 dark:bg-slate-700 mx-2" />
+                        <View className={`px-2 py-[3px] rounded-md ${category.container.split(' ').filter(c => c.startsWith('bg-')).join(' ')}`}>
+                            <Text className={`text-[10px] font-bold tracking-tight ${category.container.split(' ').filter(c => c.startsWith('text-')).join(' ')}`}>
                                 {category.label}
                             </Text>
                         </View>
@@ -130,7 +110,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete, on
                 </View>
 
                 {/* Menu */}
-                <TouchableOpacity onPress={handleMenuPress} style={styles.menuButton}>
+                <TouchableOpacity onPress={handleMenuPress} className="p-2 ml-1">
                     <Ionicons name="ellipsis-horizontal" size={18} color={isDark ? '#475569' : '#D1D5DB'} />
                 </TouchableOpacity>
             </View>
@@ -138,86 +118,4 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete, on
     );
 };
 
-const styles = StyleSheet.create({
-    cardContainer: {
-        paddingHorizontal: 16,
-        paddingVertical: 6,
-    },
-    card: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderRadius: 16,
-        padding: 16,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.06,
-        shadowRadius: 8,
-        elevation: 2,
-        borderWidth: 1,
-    },
-    checkboxContainer: {
-        width: 22,
-        height: 22,
-        marginRight: 12,
-    },
-    checkboxUnchecked: {
-        width: 22,
-        height: 22,
-        borderRadius: 11,
-        borderWidth: 2,
-    },
-    checkboxChecked: {
-        width: 22,
-        height: 22,
-        borderRadius: 11,
-        backgroundColor: '#3B82F6',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    content: {
-        flex: 1,
-    },
-    title: {
-        fontSize: 15,
-        fontWeight: '600',
-        marginBottom: 6,
-    },
-    titleCompleted: {
-        textDecorationLine: 'line-through',
-        color: '#9CA3AF',
-        opacity: 0.6,
-    },
-    metaRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    timeContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 4,
-    },
-    time: {
-        fontSize: 12,
-        fontWeight: '400',
-    },
-    dotSeparator: {
-        width: 3,
-        height: 3,
-        borderRadius: 1.5,
-        marginHorizontal: 8,
-    },
-    tag: {
-        paddingHorizontal: 8,
-        paddingVertical: 3,
-        borderRadius: 6,
-    },
-    tagText: {
-        fontSize: 10,
-        fontWeight: '700',
-        letterSpacing: 0.3,
-    },
-    menuButton: {
-        padding: 8,
-        marginLeft: 4,
-    },
-});
+

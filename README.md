@@ -27,16 +27,19 @@ A modern, high-performance task management application built with **React Native
 
 ## 📂 Project Structure
 
-The project follows a clean, layered architecture for maintainability and scalability:
+This project follows a clean, layered architecture, separating the routing logic from the core application source:
 
 ```text
-src/
-├── components/   # Reusable UI elements (DateCard, TaskItem, etc.)
-├── contexts/     # Global state management
-├── hooks/        # Custom React hooks
-├── services/     # External logic (Notifications, Storage)
-└── types/        # TypeScript definitions
-app/              # Expo Router pages and layouts
+├── app/              # Expo Router (Tabs, Layouts, Screens)
+│   └── (tabs)/       # Main application tabs
+├── src/              # Source code
+│   ├── components/   # Reusable UI components
+│   ├── contexts/     # Global state (Theme, Tasks)
+│   ├── hooks/        # Custom React hooks
+│   ├── services/     # Logic services (Storage, Notifications)
+│   └── types/        # TypeScript interfaces
+├── assets/           # Static assets (Images, Fonts)
+└── global.css        # Tailwind / Global styles
 ```
 
 ---
