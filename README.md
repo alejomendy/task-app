@@ -1,50 +1,87 @@
-# Welcome to your Expo app 👋
+# 🕒 TaskApp
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A modern, high-performance task management application built with **React Native** and **Expo**. TaskApp helps you stay organized with a seamless experience across tasks, calendar views, and focused productivity sessions.
 
-## Get started
+---
 
-1. Install dependencies
+## ✨ Key Features
 
+- **🗓️ Smart Calendar Integration**: Visualize your tasks and schedule with an intuitive calendar interface.
+- **🎯 Focus Mode**: Dedicated session timer to help you concentrate on deep work.
+- **🔔 Real-time Notifications**: Never miss a deadline with scheduled reminders.
+- **💾 Persistent Storage**: Your data is saved locally using high-performance storage solutions.
+- **🎨 Beautiful UI**: Crafted with **NativeWind** (Tailwind CSS) for a sleek, modern, and responsive design.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Framework**: [Expo](https://expo.dev/) (React Native)
+- **Styling**: [NativeWind](https://www.nativewind.dev/) (Tailwind CSS for React Native)
+- **Navigation**: [Expo Router](https://docs.expo.dev/router/introduction/) (Link-based routing)
+- **Icons**: [@expo/vector-icons](https://icons.expo.fyi/)
+- **State & Storage**: React Context + Async Storage
+- **Animations**: [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/)
+
+---
+
+## 📂 Project Structure
+
+The project follows a clean, layered architecture for maintainability and scalability:
+
+```text
+src/
+├── components/   # Reusable UI elements (DateCard, TaskItem, etc.)
+├── contexts/     # Global state management
+├── hooks/        # Custom React hooks
+├── services/     # External logic (Notifications, Storage)
+└── types/        # TypeScript definitions
+app/              # Expo Router pages and layouts
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (LTS)
+- [Expo Go](https://expo.dev/go) app on your mobile device (optional for testing)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd task-app
+   ```
+
+2. **Install dependencies**
    ```bash
    npm install
    ```
 
-2. Start the app
-
+3. **Start the development server**
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+---
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 📱 Development
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+In the output of `npx expo start`, you can choose:
+- Press `i` to open in the **iOS Simulator**.
+- Press `a` to open in the **Android Emulator**.
+- Scan the QR code with **Expo Go** to run on your physical device.
 
-## Get a fresh project
+---
 
-When you're ready, run:
+## 🤝 Contributing
 
-```bash
-npm run reset-project
-```
+Contributions are welcome! Feel free to open issues or submit pull requests to improve TaskApp.
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+---
 
-## Learn more
+*Made with ❤️ using Expo and React Native.*
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
